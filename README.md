@@ -1,2 +1,2 @@
 # assignment04
-Assignment 4
+Authors: Justin Hamilton and Josh Rubin
