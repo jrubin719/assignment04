@@ -11,9 +11,12 @@ editor_options:
 ## Data source
 [IPUMS USA](www.ipums.org) 
 
+## Load IPUMS data
 ```{r}
-#| label: Load IPUMS data
-# instal.packages("ipumsr")
+#| warning: false
+#| message: false
+
+# install.packages("ipumsr")
 library(ipumsr)
 # NOTE: To load data, you must download both the extract's data and the DDI
 # and also set the working directory to the folder with these files (or change the path below).
@@ -24,8 +27,10 @@ ddi <- read_ipums_ddi("usa_00043.xml")
 data <- read_ipums_micro(ddi)
 ```
 
+## Distribution of usual hours worked by gender
 ```{r}
-#| label: Distribution of usual hours worked by gender
+#| warning: false
+#| message: false
 
 library(tidyverse)
 
@@ -48,8 +53,10 @@ data |>
   theme_minimal()
 ```
 
+## Labor force participation rate by gender
 ```{r}
-#| label: Labor force participation rate by gender
+#| warning: false
+#| message: false
 
 lfpr_data <- data |>
   filter(AGE > 15 & LABFORCE != 0) |>
