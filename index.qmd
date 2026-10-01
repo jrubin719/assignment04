@@ -94,3 +94,50 @@ ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean
   theme(legend.position = "none") 
   
 ```
+
+## Labor force participation rate differences by marital status and gender
+```{r}
+#| warning: false
+#| message: false
+
+lfpr_gender_mar <- data |>
+  filter(AGE > 15, LABFORCE != 0) |>
+  mutate(
+    LABFORCE = case_when(
+      LABFORCE == 2 ~ 1,
+      LABFORCE == 1 ~ 0,
+      TRUE ~ NA
+      )
+  ) |>
+  group_by(SEX, MARST) |>
+  summarize(lfpr = mean(LABFORCE, na.rm = TRUE))
+
+lfpr_gender_mar |>
+  ggplot() +
+  geom_col(aes(x = factor(MARST), y = lfpr, fill = factor(SEX)), position = "dodge") +
+  labs(
+    title = "Labor Force Participation Rate by Gender and Marital Status",
+    subtitle = "Among individuals 16 years and older",
+    x = "Marital Status",
+    y = "Labor Force Participation Rate",
+    fill = "Gender"
+  ) +
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_x_discrete(labels = c(
+    "1" = "Married, spouse present",
+    "2" = "Married, spouse absent",
+    "3" = "Separated",
+    "4" = "Divorced",
+    "5" = "Widowed",
+    "6" = "Never married/single"
+    )) +
+  scale_fill_discrete(labels = c(
+    "1" = "Male",
+    "2" = "Female"
+    )) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
+  )
+
+```
