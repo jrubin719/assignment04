@@ -9,7 +9,7 @@ editor_options:
 ---
 
 ## Data source
-[IPUMS USA](www.ipums.org) 
+[IPUMS USA](https://www.ipums.org) 
 
 ## Load IPUMS data
 ```{r}
@@ -47,8 +47,8 @@ data |>
     median.linewidth = 1.5) +
   labs(
     title = "Distribution of usual hours worked by gender, 2024",
-    subtitle = "Among individuals over 15 years and worked last year",
-    caption = "Note: Bolded lines represent the median hours worked."
+    subtitle = "Among individuals 16 years and older and worked last year",
+    caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS. Bolded lines represent the median hours worked."
   ) +
   scale_y_discrete(
     name = "Sex",                         
@@ -57,6 +57,10 @@ data |>
   xlab("Usual hours worked per week") +
   theme_minimal()
 ```
+
+- Same median but male distribution is much more tightly concentrated around 40 hours
+- Females have greater variation in weekly hours worked
+- May reflect responsibilities outside of work in addition to generally being more marginally attached to workforce than males
 
 ## Labor force participation rate by gender
 ```{r}
@@ -76,24 +80,29 @@ lfpr_data <- data |>
   group_by(sex_clean) |>
   summarize(
     LFPR = mean(LABFORCE, na.rm = TRUE)
-  ) 
+  )
 
 ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean)) +
   geom_bar(stat = "identity", width = 0.5) +
   geom_text(
     mapping = aes(label = scales::percent(LFPR, accuracy = 0.1)),
-    vjust = -1) +
+    vjust = -0.75) +
   labs(
     title = "Labor force participation rate by gender, 2024",
-    subtitle = "Among individuals over 15 years"
+    subtitle = "Among individuals 16 years and older",
+    caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS." 
   ) +
-  scale_y_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::label_percent()) +
   xlab("Sex") +
   ylab("Labor force participation rate (%)") +
   theme_minimal() +
   theme(legend.position = "none") 
   
 ```
+
+- Male LFPR is over 7pp higher than female LFPR
+- Again a reflection of weaker attachment from females to the labor force than males
+- Lower female LFPR presents a potential point of deadweight loss if these individuals want to work but cannot due to barriers to employment or other circumstances
 
 ## Labor force participation rate differences by marital status and gender
 ```{r}
@@ -119,8 +128,9 @@ lfpr_gender_mar |>
     title = "Labor Force Participation Rate by Gender and Marital Status",
     subtitle = "Among individuals 16 years and older",
     x = "Marital Status",
-    y = "Labor Force Participation Rate",
-    fill = "Gender"
+    y = "Labor force participation rate (%)",
+    fill = "Gender",
+    caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS."
   ) +
   scale_y_continuous(labels = scales::label_percent()) +
   scale_x_discrete(labels = c(
@@ -141,6 +151,9 @@ lfpr_gender_mar |>
   )
 
 ```
+
+- Call attention to large gap for "Married, spouse present" but limited differences between "married, spouse absent" and "divorced"
+- 
 
 ## Relationship between state education levels and labor force participation rate
 ```{r}
@@ -172,13 +185,19 @@ state_data %>%
   geom_point(aes(x = COLLEGE_PERC, y = LFPR)) +
   geom_smooth(aes(x = COLLEGE_PERC, y = LFPR), se = FALSE, method = "lm", color = "skyblue1") +
   labs(
-    title = "% of state residents with at least some college by labor force participation rate",
+    title = "Relationship between state share of residents with some college
+    \nand state labor force participation rate",
     subtitle = "Among individuals 16 years and older",
-    x = "Percentage of Individuals with at least some college",
-    y = "Labor Force Participation Rate"
+    x = "Percentage of individuals with at least some college",
+    y = "Labor force participation rate (%)",
+    caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS."
   ) + 
   scale_y_continuous(labels = scales::label_percent()) +
   scale_x_continuous(labels = scales::label_percent()) +
   theme_minimal()
 
 ```
+
+- Increasing college education is associated with increased labor force participation
+- Could be a potential policy lever (increasing college attendance) for increasing LFPR
+- Going to college --> learn about personal finance --> more likely to want a job --> increase labor force participation rate.
