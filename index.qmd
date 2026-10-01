@@ -58,9 +58,7 @@ data |>
   theme_minimal()
 ```
 
-- Same median but male distribution is much more tightly concentrated around 40 hours
-- Females have greater variation in weekly hours worked
-- May reflect responsibilities outside of work in addition to generally being more marginally attached to workforce than males
+Males and females have the same median usual hours worked per week (~ 40 hours). However, the distribution of hours worked for males is much more tightly concentrated around the median than the distribution of hours worked for females. In general, females have greater variation in weekly hours worked. This increased variation from females may reflect familial responsibilities outside of work in addition to females generally being more marginally attached to workforce than males.
 
 ## Labor force participation rate by gender
 ```{r}
@@ -92,7 +90,7 @@ ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean
     subtitle = "Among individuals 16 years and older",
     caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS." 
   ) +
-  scale_y_continuous(labels = scales::label_percent()) +
+  scale_y_continuous(labels = scales::label_percent(), limits = c(0,0.75)) +
   xlab("Sex") +
   ylab("Labor force participation rate (%)") +
   theme_minimal() +
@@ -100,9 +98,7 @@ ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean
   
 ```
 
-- Male LFPR is over 7pp higher than female LFPR
-- Again a reflection of weaker attachment from females to the labor force than males
-- Lower female LFPR presents a potential point of deadweight loss if these individuals want to work but cannot due to barriers to employment or other circumstances
+Male labor force is rougly 7.5 percentage points higher than female labor force participation (62.3% vs. 54.8%). This difference, like variation in hours worked, may reflect familial responsibilities outside of work in addition to females generally being more marginally attached to workforce than males. Lower female labor force participation presents a potential point of deadweight loss if these individuals want to work but cannot due to barriers to employment or other circumstances.
 
 ## Labor force participation rate differences by marital status and gender
 ```{r}
