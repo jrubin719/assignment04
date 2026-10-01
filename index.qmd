@@ -38,7 +38,7 @@ data |>
   geom_boxplot(outlier.shape = NA, width = 0.5, staplewidth = 0.4) +
   labs(
     title = "Distribution of usual hours worked by gender",
-    subtitle = "Among individuals 15 years and older and worked last year"
+    subtitle = "Among individuals over 15 years and worked last year"
   ) +
   scale_y_discrete(
     name = "Sex",                         
@@ -46,6 +46,36 @@ data |>
   ) +
   xlab("Usual hours worked per week") +
   theme_minimal()
-  
+```
 
+```{r}
+#| label: Labor force participation rate by gender
+
+lfpr_data <- data |>
+  filter(AGE > 15 & LABFORCE != 0) |>
+  mutate(
+    LABFORCE = case_when(
+      LABFORCE == 2 ~ 1,
+      LABFORCE == 1 ~ 0,
+      TRUE ~ NA
+    ),
+    sex_clean = ifelse(SEX == 1, "Male", "Female")
+  ) |>
+  group_by(sex_clean) |>
+  summarize(
+    LFPR = mean(LABFORCE, na.rm = TRUE)
+  ) 
+
+ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean)) +
+  geom_bar(stat = "identity", width = 0.5) +
+  labs(
+    title = "Labor force participation rate by gender",
+    subtitle = "Among individuals over 15 years"
+  ) +
+  scale_y_continuous(labels = scales::percent) +
+  xlab("Sex") +
+  ylab("Labor force participation rate (%)") +
+  theme_minimal() +
+  theme(legend.position = "none")
+  
 ```
