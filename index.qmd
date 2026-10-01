@@ -11,19 +11,41 @@ editor_options:
 ## Data source
 [IPUMS USA](www.ipums.org) 
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+#| label: Load IPUMS data
+# instal.packages("ipumsr")
+library(ipumsr)
+# NOTE: To load data, you must download both the extract's data and the DDI
+# and also set the working directory to the folder with these files (or change the path below).
+
+if (!require("ipumsr")) stop("Reading IPUMS data into R requires the ipumsr package. It can be installed using the following command: install.packages('ipumsr')")
+
+ddi <- read_ipums_ddi("usa_00043.xml")
+data <- read_ipums_micro(ddi)
 ```
 
-You can add options to executable code like this
-
 ```{r}
-#| echo: false
-2 * 2
-```
+#| label: Distribution of usual hours worked by gender
 
-The `echo: false` option disables the printing of code (only output is displayed).
+library(tidyverse)
+
+data |>
+  filter(AGE > 15 & WKSWORK1 > 0) |>
+  mutate(
+    UHRSWORK = ifelse(UHRSWORK == 99, NA, UHRSWORK)
+  ) |>
+  ggplot(mapping = aes(x = UHRSWORK, y = factor(SEX))) +
+  geom_boxplot(outlier.shape = NA, width = 0.5, staplewidth = 0.4) +
+  labs(
+    title = "Distribution of usual hours worked by gender",
+    subtitle = "Among individuals 15 years and older and worked last year"
+  ) +
+  scale_y_discrete(
+    name = "Sex",                         
+    labels = c("1" = "Male", "2" = "Female")
+  ) +
+  xlab("Usual hours worked per week") +
+  theme_minimal()
+  
+
+```
