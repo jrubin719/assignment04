@@ -40,10 +40,15 @@ data |>
     UHRSWORK = ifelse(UHRSWORK == 99, NA, UHRSWORK)
   ) |>
   ggplot(mapping = aes(x = UHRSWORK, y = factor(SEX))) +
-  geom_boxplot(outlier.shape = NA, width = 0.5, staplewidth = 0.4) +
+  geom_boxplot(
+    outlier.shape = NA, 
+    width = 0.5, 
+    staplewidth = 0.4, 
+    median.linewidth = 1.5) +
   labs(
-    title = "Distribution of usual hours worked by gender",
-    subtitle = "Among individuals over 15 years and worked last year"
+    title = "Distribution of usual hours worked by gender, 2024",
+    subtitle = "Among individuals over 15 years and worked last year",
+    caption = "Note: Bolded lines represent the median hours worked."
   ) +
   scale_y_discrete(
     name = "Sex",                         
@@ -75,14 +80,17 @@ lfpr_data <- data |>
 
 ggplot(data = lfpr_data, mapping = aes(x = sex_clean, y = LFPR, fill = sex_clean)) +
   geom_bar(stat = "identity", width = 0.5) +
+  geom_text(
+    mapping = aes(label = scales::percent(LFPR, accuracy = 0.1)),
+    vjust = -1) +
   labs(
-    title = "Labor force participation rate by gender",
+    title = "Labor force participation rate by gender, 2024",
     subtitle = "Among individuals over 15 years"
   ) +
   scale_y_continuous(labels = scales::percent) +
   xlab("Sex") +
   ylab("Labor force participation rate (%)") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") 
   
 ```
