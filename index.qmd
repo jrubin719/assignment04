@@ -141,3 +141,44 @@ lfpr_gender_mar |>
   )
 
 ```
+
+## Relationship between state education levels and labor force participation rate
+```{r}
+#| warning: false
+#| message: false
+
+state_data <- data %>%
+  filter(AGE > 15, EDUC != 0, LABFORCE != 0) %>%
+  mutate(
+    LABFORCE = case_when(
+      LABFORCE == 2 ~ 1,
+      LABFORCE == 1 ~ 0,
+      TRUE ~ NA
+      ),
+    COLLEGE = ifelse(
+      EDUC >= 7,
+      1,
+      0
+    )
+  ) %>%
+  group_by(STATEFIP) %>%
+  summarize(
+    LFPR = mean(LABFORCE, na.rm = TRUE),
+    COLLEGE_PERC = mean(COLLEGE, na.rm = TRUE)
+  )
+
+state_data %>%
+  ggplot() +
+  geom_point(aes(x = COLLEGE_PERC, y = LFPR)) +
+  geom_smooth(aes(x = COLLEGE_PERC, y = LFPR), se = FALSE, method = "lm", color = "skyblue1") +
+  labs(
+    title = "% of state residents with at least some college by labor force participation rate",
+    subtitle = "Among individuals 16 years and older",
+    x = "Percentage of Individuals with at least some college",
+    y = "Labor Force Participation Rate"
+  ) + 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_x_continuous(labels = scales::label_percent()) +
+  theme_minimal()
+
+```
