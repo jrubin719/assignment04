@@ -1,5 +1,5 @@
 ---
-title: "index"
+title: "Differences in Labor Force Participation Rates Between Genders"
 author: Justin Hamilton and Josh Rubin
 embed-resources: true
 format: html
@@ -18,8 +18,6 @@ editor_options:
 
 # install.packages("ipumsr")
 library(ipumsr)
-# NOTE: To load data, you must download both the extract's data and the DDI
-# and also set the working directory to the folder with these files (or change the path below).
 
 if (!require("ipumsr")) stop("Reading IPUMS data into R requires the ipumsr package. It can be installed using the following command: install.packages('ipumsr')")
 
@@ -148,10 +146,9 @@ lfpr_gender_mar |>
 
 ```
 
-- Call attention to large gap for "Married, spouse present" but limited differences between "married, spouse absent" and "divorced"
-- 
+The differences in labor force participation between married (spouse present) males and females is particularly interesting here, especially when we observe that no such difference exists for those married where the spouse is absent. Among those married with a spouse present, females have about a 10 percentage point lower participation rate than males. No such difference exist in any other marital category. While the previous point about potential barriers for females is important, we must also consider that some of this difference can be attributed to preferences rather than systemic issue. Married females with a spouse present might be less likely to work because they have the option not to if their spouse works.
 
-## Relationship between state education levels and labor force participation rate
+## Relationship between state education levels and labor force participation rate by gender
 ```{r}
 #| warning: false
 #| message: false
@@ -170,30 +167,56 @@ state_data <- data %>%
       0
     )
   ) %>%
-  group_by(STATEFIP) %>%
+  group_by(SEX, STATEFIP) %>%
   summarize(
     LFPR = mean(LABFORCE, na.rm = TRUE),
     COLLEGE_PERC = mean(COLLEGE, na.rm = TRUE)
   )
 
 state_data %>%
-  ggplot() +
-  geom_point(aes(x = COLLEGE_PERC, y = LFPR)) +
-  geom_smooth(aes(x = COLLEGE_PERC, y = LFPR), se = FALSE, method = "lm", color = "skyblue1") +
+  ggplot(aes(x = COLLEGE_PERC, y = LFPR, color = factor(SEX))) +
+  geom_point() +
+  geom_smooth(se = FALSE, method = "lm") +
   labs(
     title = "Relationship between state share of residents with some college
-    \nand state labor force participation rate",
+    \nand state labor force participation rate by gender",
     subtitle = "Among individuals 16 years and older",
     x = "Percentage of individuals with at least some college",
     y = "Labor force participation rate (%)",
+    color = "Gender",
     caption = "Source: IPUMS USA, American Community Survey (ACS) 2024 1-year estimates.\nNote: Estimates reflect unweighted results from the ACS."
   ) + 
   scale_y_continuous(labels = scales::label_percent()) +
   scale_x_continuous(labels = scales::label_percent()) +
+  scale_color_discrete(labels = c(
+    "1" = "Male",
+    "2" = "Female"
+    )) +
   theme_minimal()
 
 ```
 
-- Increasing college education is associated with increased labor force participation
-- Could be a potential policy lever (increasing college attendance) for increasing LFPR
-- Going to college --> learn about personal finance --> more likely to want a job --> increase labor force participation rate.
+The above graph shows that there is an association between a state's percentage of individuals with at least some college education and a state's labor force participation rate. States with higher percentages of college educated individuals tend to have higher participation rates. It appears to be present for both males and females, possibly slightly greater (steeper slope) for females. If we are interested in increasing female labor force participation, this suggests that a potential policy lever could be increasing access to college education. Of course, more rigerous research is needed.
+
+## Visualization Requirements Checklist
+| Requirement Category | Specific Element / Code Used | Graph # (1, 2, 3, or 4) |
+| :--- | :--- | :--- |
+| **Geom 1** | `geom_point()` | 4 |
+| **Geom 2** | `geom_bar()` | 2 |
+| **Geom 3** | `geom_smooth()` | 4 |
+| **Geom 4** | `geom_boxplot()` | 1 |
+| **Geom 5** | `geom_text()` | 2 |
+| **Aesthetic 1** *(inside `aes()`)* | `x = COLLEGE_PERC` | 4 |
+| **Aesthetic 2** *(inside `aes()`)* | `y = LFPR` | 4 |
+| **Aesthetic 3** *(inside `aes()`)* | `color = factor(SEX)` | 4 |
+| **Aesthetic 4** *(inside `aes()`)* | `x = factor(MARST)` | 3 |
+| **Aesthetic 5** *(inside `aes()`)* | `x = UHRSWORK` | 1 |
+| **Aesthetic 6** *(inside `aes()`)* | `fill = factor(SEX)` | 3 |
+| **Non-Aesthetic 1** *(outside `aes()`)* | `se = FALSE` | 4 |
+| **Non-Aesthetic 2** *(outside `aes()`)* | `method = "lm"` | 4 |
+| **Non-Aesthetic 3** *(outside `aes()`)* | `position = "dodge"` | 3 |
+| **Non-Aesthetic 4** *(outside `aes()`)* | `outlier.shape = NA` | 1 |
+| **Non-Aesthetic 5** *(outside `aes()`)* | `width = 0.5` | 1 |
+| **Non-Aesthetic 6** *(outside `aes()`)* | `vjust = -0.75` | 2 |
+| **Custom Scale 1** | `scale_y_continuous(labels = scales::label_percent())` | 4 |
+| **Custom Scale 2** | `scale_y_discrete(name = "Sex", labels = c("1" = "Male", "2" = "Female"))` | 1 |
